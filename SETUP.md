@@ -6,16 +6,23 @@ This guide will help you set up the Crudibase development environment.
 
 Before you begin, ensure you have the following installed:
 
-- **Node.js** 18+ LTS ([Download](https://nodejs.org/))
+- **Node.js 22 LTS** (Required - see [NODEJS.md](NODEJS.md) for installation)
 - **npm** 9+ (comes with Node.js)
 - **Git** ([Download](https://git-scm.com/))
 
 Verify installations:
 ```bash
-node -v   # Should show v18.x.x or higher
+node -v   # Must show v22.x.x
 npm -v    # Should show 9.x.x or higher
 git --version
 ```
+
+**Important:** Node.js 22 is required because:
+- better-sqlite3 requires Node.js 22 for native bindings
+- Node.js 23 is not LTS and has compatibility issues
+- Node.js 24 is not yet supported by better-sqlite3
+
+See [NODEJS.md](NODEJS.md) for detailed installation instructions.
 
 ## Quick Setup (Automated)
 

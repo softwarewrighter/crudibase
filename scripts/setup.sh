@@ -13,8 +13,23 @@ echo "📋 Checking Node.js version..."
 NODE_VERSION=$(node -v)
 echo "   Node.js version: $NODE_VERSION"
 
-if [[ ! "$NODE_VERSION" =~ ^v(18|19|20|21) ]]; then
-  echo "   ⚠️  Warning: Node.js 18+ is recommended"
+# Extract major version
+NODE_MAJOR=$(echo "$NODE_VERSION" | cut -d'.' -f1 | sed 's/v//')
+
+if [[ "$NODE_MAJOR" -lt 22 ]]; then
+  echo "   ❌ Error: Node.js 22 LTS is required (current: $NODE_VERSION)"
+  echo "   Please install Node.js 22: https://nodejs.org/"
+  exit 1
+elif [[ "$NODE_MAJOR" -ge 24 ]]; then
+  echo "   ⚠️  Warning: Node.js 24+ not yet supported by better-sqlite3"
+  echo "   Please use Node.js 22 LTS: https://nodejs.org/"
+  exit 1
+elif [[ "$NODE_MAJOR" -eq 23 ]]; then
+  echo "   ⚠️  Warning: Node.js 23 is not an LTS version"
+  echo "   Please use Node.js 22 LTS: https://nodejs.org/"
+  exit 1
+else
+  echo "   ✅ Node.js $NODE_VERSION is compatible"
 fi
 
 # Install root dependencies
