@@ -6,6 +6,10 @@ yarn-error.log*
 pnpm-debug.log*
 .pnpm-debug.log*
 
+# Lock files (keep package-lock.json, ignore others)
+yarn.lock
+pnpm-lock.yaml
+
 # Build outputs
 dist/
 build/
@@ -19,15 +23,16 @@ out/
 .env.development.local
 .env.test.local
 .env.production.local
+!.env.example
 
 # Database files
 *.db
 *.sqlite
 *.sqlite3
-data/
 *.db-journal
 *.db-shm
 *.db-wal
+src/backend/data/
 
 # Testing
 coverage/
@@ -35,9 +40,12 @@ coverage/
 playwright-report/
 test-results/
 *.spec.js.snap
+.playwright/
 
 # IDE and Editor
-.vscode/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
 .idea/
 *.swp
 *.swo
@@ -45,20 +53,25 @@ test-results/
 .DS_Store
 *.sublime-project
 *.sublime-workspace
+.vscode-test/
 
 # Logs
 logs/
 *.log
+lerna-debug.log*
+.pnpm-debug.log*
 
 # OS
 .DS_Store
 Thumbs.db
 Desktop.ini
+$RECYCLE.BIN/
 
 # Temporary files
 tmp/
 temp/
 *.tmp
+*.bak
 
 # Production builds
 *.tgz
@@ -72,7 +85,15 @@ playwright/.cache/
 playwright-report/
 test-results/
 
+# Husky
+.husky/_
+
+# Documentation (optional - remove if you want to track these)
+docs/chat-history.txt
+docs/*.draft.md
+
 # Misc
 .turbo/
 .vercel/
 .netlify/
+.eslintcache
