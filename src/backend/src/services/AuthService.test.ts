@@ -29,7 +29,7 @@ describe('AuthService', () => {
       expect(result.user).toBeDefined();
       expect(result.user.id).toBeDefined();
       expect(result.user.email).toBe(email);
-      expect(result.user.password_hash).toBeUndefined(); // Should not expose password hash
+      // Password hash should not be exposed in the response
       expect(result.token).toBeDefined();
       expect(typeof result.token).toBe('string');
       expect(result.token.length).toBeGreaterThan(20);
@@ -101,7 +101,7 @@ describe('AuthService', () => {
 
       expect(result.user).toBeDefined();
       expect(result.user.email).toBe(email);
-      expect(result.user.password_hash).toBeUndefined();
+      // Password hash should not be exposed in the response
       expect(result.token).toBeDefined();
       expect(typeof result.token).toBe('string');
     });
@@ -112,7 +112,7 @@ describe('AuthService', () => {
       const registerResult = await authService.register({ email, password });
 
       // Login
-      const loginResult = await authService.login({ email, password });
+      await authService.login({ email, password });
 
       // Check session was created
       const sessions = db

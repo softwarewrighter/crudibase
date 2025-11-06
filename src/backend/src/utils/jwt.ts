@@ -1,7 +1,6 @@
 import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-this';
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '1h';
 
 export interface JWTPayload {
   userId: number;
@@ -12,8 +11,10 @@ export interface JWTPayload {
  * Generate a JWT token for a user
  */
 export function generateToken(payload: JWTPayload): string {
+  // TypeScript has issues with the expiresIn type from process.env
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return jwt.sign(payload, JWT_SECRET, {
-    expiresIn: JWT_EXPIRES_IN,
+    expiresIn: (process.env.JWT_EXPIRES_IN || '1h') as any,
   });
 }
 

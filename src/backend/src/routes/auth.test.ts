@@ -30,12 +30,16 @@ describe('POST /api/auth/register', () => {
       })
       .expect(201);
 
-    expect(response.body.user).toBeDefined();
-    expect(response.body.user.id).toBeDefined();
-    expect(response.body.user.email).toBe(email);
-    expect(response.body.user.password_hash).toBeUndefined();
-    expect(response.body.token).toBeDefined();
-    expect(typeof response.body.token).toBe('string');
+    const body = response.body as {
+      user: { id: number; email: string; password_hash?: string };
+      token: string;
+    };
+    expect(body.user).toBeDefined();
+    expect(body.user.id).toBeDefined();
+    expect(body.user.email).toBe(email);
+    expect(body.user.password_hash).toBeUndefined();
+    expect(body.token).toBeDefined();
+    expect(typeof body.token).toBe('string');
   });
 
   it('should return 400 for missing email', async () => {
@@ -46,8 +50,9 @@ describe('POST /api/auth/register', () => {
       })
       .expect(400);
 
-    expect(response.body.error).toBeDefined();
-    expect(response.body.error.message).toMatch(/email.*required/i);
+    const body = response.body as { error: { message: string } };
+    expect(body.error).toBeDefined();
+    expect(body.error.message).toMatch(/email.*required/i);
   });
 
   it('should return 400 for missing password', async () => {
@@ -58,8 +63,9 @@ describe('POST /api/auth/register', () => {
       })
       .expect(400);
 
-    expect(response.body.error).toBeDefined();
-    expect(response.body.error.message).toMatch(/password.*required/i);
+    const body = response.body as { error: { message: string } };
+    expect(body.error).toBeDefined();
+    expect(body.error.message).toMatch(/password.*required/i);
   });
 
   it('should return 400 for invalid email format', async () => {
@@ -71,8 +77,9 @@ describe('POST /api/auth/register', () => {
       })
       .expect(400);
 
-    expect(response.body.error).toBeDefined();
-    expect(response.body.error.message).toMatch(/invalid email/i);
+    const body = response.body as { error: { message: string } };
+    expect(body.error).toBeDefined();
+    expect(body.error.message).toMatch(/invalid email/i);
   });
 
   it('should return 400 for weak password', async () => {
@@ -84,8 +91,9 @@ describe('POST /api/auth/register', () => {
       })
       .expect(400);
 
-    expect(response.body.error).toBeDefined();
-    expect(response.body.error.message).toMatch(
+    const body = response.body as { error: { message: string } };
+    expect(body.error).toBeDefined();
+    expect(body.error.message).toMatch(
       /password must be at least 8 characters/i
     );
   });
@@ -108,8 +116,9 @@ describe('POST /api/auth/register', () => {
       })
       .expect(409);
 
-    expect(response.body.error).toBeDefined();
-    expect(response.body.error.message).toMatch(/email already exists/i);
+    const body = response.body as { error: { message: string } };
+    expect(body.error).toBeDefined();
+    expect(body.error.message).toMatch(/email already exists/i);
   });
 });
 
@@ -137,9 +146,10 @@ describe('POST /api/auth/login', () => {
       .send({ email, password })
       .expect(200);
 
-    expect(response.body.user).toBeDefined();
-    expect(response.body.user.email).toBe(email);
-    expect(response.body.token).toBeDefined();
+    const body = response.body as { user: { email: string }; token: string };
+    expect(body.user).toBeDefined();
+    expect(body.user.email).toBe(email);
+    expect(body.token).toBeDefined();
   });
 
   it('should return 401 for invalid password', async () => {

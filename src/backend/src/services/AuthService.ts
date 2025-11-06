@@ -1,4 +1,4 @@
-import { User, type CreateUserInput, type UserData } from '../models/User';
+import { User, type CreateUserInput } from '../models/User';
 import { generateToken } from '../utils/jwt';
 import { getDatabase } from '../utils/database';
 

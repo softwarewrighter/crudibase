@@ -1,15 +1,12 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { User } from './User';
 import { getDatabase, closeDatabase } from '../utils/database';
-import type Database from 'better-sqlite3';
 
 describe('User Model', () => {
-  let db: Database.Database;
-
   beforeEach(() => {
     // Use in-memory database for testing
     process.env.DATABASE_PATH = ':memory:';
-    db = getDatabase();
+    getDatabase();
   });
 
   afterEach(() => {

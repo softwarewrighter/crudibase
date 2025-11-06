@@ -31,6 +31,6 @@
     "types": ["vitest/globals", "@testing-library/jest-dom"],
     "composite": true
   },
-  "include": ["src"],
+  "include": ["src", "vite-env.d.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

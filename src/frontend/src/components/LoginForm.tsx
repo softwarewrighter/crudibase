@@ -118,7 +118,7 @@ export default function LoginForm() {
             Sign in to your account
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            Don't have an account?{' '}
+            Don&apos;t have an account?{' '}
             <Link
               to="/register"
               className="font-medium text-primary hover:text-primary-dark"

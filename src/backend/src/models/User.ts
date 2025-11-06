@@ -84,25 +84,25 @@ export class User {
   /**
    * Find user by email
    */
-  static async findByEmail(email: string): Promise<UserData | null> {
+  static findByEmail(email: string): Promise<UserData | null> {
     const db = getDatabase();
     const user = db
       .prepare('SELECT * FROM users WHERE email = ?')
       .get(email) as UserData | undefined;
 
-    return user || null;
+    return Promise.resolve(user || null);
   }
 
   /**
    * Find user by ID
    */
-  static async findById(id: number): Promise<UserData | null> {
+  static findById(id: number): Promise<UserData | null> {
     const db = getDatabase();
     const user = db.prepare('SELECT * FROM users WHERE id = ?').get(id) as
       | UserData
       | undefined;
 
-    return user || null;
+    return Promise.resolve(user || null);
   }
 
   /**
