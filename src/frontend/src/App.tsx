@@ -1,5 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import RegisterForm from './components/RegisterForm';
+import LoginForm from './components/LoginForm';
+import Dashboard from './components/Dashboard';
 
 function HomePage() {
   return (
@@ -23,17 +25,7 @@ function HomePage() {
 }
 
 function LoginPage() {
-  return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="card max-w-md w-full">
-        <h2 className="text-2xl font-bold mb-6">Sign In</h2>
-        <p className="text-slate-600">Login form coming soon...</p>
-        <Link to="/" className="text-primary mt-4 inline-block">
-          ← Back to Home
-        </Link>
-      </div>
-    </div>
-  );
+  return <LoginForm />;
 }
 
 function RegisterPage() {
@@ -64,6 +56,7 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Router>

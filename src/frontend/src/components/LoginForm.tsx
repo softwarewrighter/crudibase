@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-interface RegisterFormData {
+interface LoginFormData {
   email: string;
   password: string;
 }
@@ -14,9 +14,9 @@ interface FormErrors {
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
-export default function RegisterForm() {
+export default function LoginForm() {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState<RegisterFormData>({
+  const [formData, setFormData] = useState<LoginFormData>({
     email: '',
     password: '',
   });
@@ -41,8 +41,6 @@ export default function RegisterForm() {
 
     if (!formData.password) {
       newErrors.password = 'Password is required';
-    } else if (formData.password.length < 8) {
-      newErrors.password = 'Password must be at least 8 characters';
     }
 
     setErrors(newErrors);
@@ -61,7 +59,7 @@ export default function RegisterForm() {
     setIsSubmitting(true);
 
     try {
-      const response = await axios.post(`${API_URL}/auth/register`, {
+      const response = await axios.post(`${API_URL}/auth/login`, {
         email: formData.email,
         password: formData.password,
       });
@@ -69,7 +67,7 @@ export default function RegisterForm() {
       // Store token in localStorage
       localStorage.setItem('token', response.data.token);
 
-      setSuccessMessage('Registration successful! Redirecting...');
+      setSuccessMessage('Login successful! Redirecting...');
       setFormData({ email: '', password: '' });
 
       // Redirect to dashboard after a short delay
@@ -84,10 +82,8 @@ export default function RegisterForm() {
             data?: { error?: { message?: string } };
           };
         };
-        if (axiosError.response?.status === 409) {
-          setErrorMessage(
-            'Email already exists. Please use a different email or sign in.'
-          );
+        if (axiosError.response?.status === 401) {
+          setErrorMessage('Invalid email or password. Please try again.');
         } else if (axiosError.response?.status === 400) {
           setErrorMessage(
             axiosError.response.data?.error?.message ||
@@ -119,15 +115,15 @@ export default function RegisterForm() {
       <div className="max-w-md w-full space-y-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Create your account
+            Sign in to your account
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            Already have an account?{' '}
+            Don't have an account?{' '}
             <Link
-              to="/login"
+              to="/register"
               className="font-medium text-primary hover:text-primary-dark"
             >
-              Sign in
+              Sign up
             </Link>
           </p>
         </div>
@@ -183,13 +179,13 @@ export default function RegisterForm() {
                 id="password"
                 name="password"
                 type="password"
-                autoComplete="new-password"
+                autoComplete="current-password"
                 value={formData.password}
                 onChange={handleChange}
                 className={`mt-1 appearance-none relative block w-full px-3 py-2 border ${
                   errors.password ? 'border-red-300' : 'border-gray-300'
                 } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm`}
-                placeholder="At least 8 characters"
+                placeholder="Enter your password"
               />
               {errors.password && (
                 <p className="mt-1 text-sm text-red-600">{errors.password}</p>
@@ -207,7 +203,7 @@ export default function RegisterForm() {
                   : 'bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary'
               }`}
             >
-              {isSubmitting ? 'Registering...' : 'Register'}
+              {isSubmitting ? 'Signing in...' : 'Sign in'}
             </button>
           </div>
         </form>
