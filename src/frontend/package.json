@@ -4,9 +4,12 @@
   "description": "Crudibase frontend React application",
   "type": "module",
   "scripts": {
+    "check-node-version": "node ../../scripts/check-node-version.js",
     "dev": "vite",
+    "prebuild": "npm run check-node-version",
     "build": "tsc && vite build",
     "preview": "vite preview",
+    "pretest": "npm run check-node-version",
     "test": "vitest run",
     "test:watch": "vitest watch",
     "test:coverage": "vitest run --coverage",

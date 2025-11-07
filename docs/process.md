@@ -44,6 +44,7 @@ Every feature follows this pattern:
 ### Backend TDD Example
 
 **Step 1: RED (Write failing test)**
+
 ```typescript
 // src/services/AuthService.test.ts
 import { describe, it, expect, beforeEach } from 'vitest';
@@ -59,7 +60,7 @@ describe('AuthService', () => {
   it('should register a new user with hashed password', async () => {
     const user = await authService.register({
       email: 'test@example.com',
-      password: 'SecurePass123!'
+      password: 'SecurePass123!',
     });
 
     expect(user.email).toBe('test@example.com');
@@ -71,6 +72,7 @@ describe('AuthService', () => {
 ```
 
 **Step 2: GREEN (Implement minimal code)**
+
 ```typescript
 // src/services/AuthService.ts
 import bcrypt from 'bcrypt';
@@ -81,7 +83,7 @@ export class AuthService {
     const password_hash = await bcrypt.hash(data.password, 12);
     const user = await User.create({
       email: data.email,
-      password_hash
+      password_hash,
     });
     return user;
   }
@@ -89,6 +91,7 @@ export class AuthService {
 ```
 
 **Step 3: REFACTOR (Clean up, add more tests)**
+
 ```typescript
 // Add more test cases
 it('should throw error if email already exists', async () => {
@@ -109,6 +112,7 @@ it('should validate password strength', async () => {
 ### Frontend TDD Example
 
 **Step 1: RED (Write failing test)**
+
 ```typescript
 // src/components/auth/LoginForm.test.tsx
 import { describe, it, expect, vi } from 'vitest';
@@ -139,6 +143,7 @@ describe('LoginForm', () => {
 ```
 
 **Step 2: GREEN (Implement component)**
+
 ```typescript
 // src/components/auth/LoginForm.tsx
 import { useForm } from 'react-hook-form';
@@ -178,6 +183,7 @@ export function LoginForm({ onSubmit }: LoginFormProps) {
 ### Backend Testing
 
 #### Unit Tests (Vitest)
+
 ```bash
 npm run test:unit        # Run unit tests
 npm run test:unit:watch  # Watch mode for development
@@ -185,11 +191,13 @@ npm run test:coverage    # Generate coverage report
 ```
 
 **What to test:**
+
 - Services (business logic)
 - Utilities (helpers, formatters)
 - Models (validation, methods)
 
 **Example structure:**
+
 ```
 src/
 ├── services/
@@ -201,17 +209,20 @@ src/
 ```
 
 #### Integration Tests (Supertest)
+
 ```bash
 npm run test:integration  # Test API endpoints
 ```
 
 **What to test:**
+
 - API endpoints (request/response)
 - Authentication middleware
 - Database operations
 - Error handling
 
 **Example:**
+
 ```typescript
 // src/routes/auth.test.ts
 import request from 'supertest';
@@ -223,7 +234,7 @@ describe('POST /api/auth/register', () => {
       .post('/api/auth/register')
       .send({
         email: 'test@example.com',
-        password: 'SecurePass123!'
+        password: 'SecurePass123!',
       })
       .expect(201);
 
@@ -236,22 +247,26 @@ describe('POST /api/auth/register', () => {
 ### Frontend Testing
 
 #### Component Tests (React Testing Library)
+
 ```bash
 npm run test:components  # Test React components
 ```
 
 **What to test:**
+
 - User interactions (clicks, typing)
 - Conditional rendering
 - Props handling
 - State changes
 
 **Best practices:**
+
 - Query by accessibility roles (getByRole)
 - Test user behavior, not implementation
 - Use userEvent for realistic interactions
 
 **Example:**
+
 ```typescript
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -269,6 +284,7 @@ it('should show error message on failed login', async () => {
 ```
 
 #### E2E Tests (Playwright)
+
 ```bash
 npm run test:e2e         # Run E2E tests headless
 npm run test:e2e:headed  # Run with browser visible
@@ -276,12 +292,14 @@ npm run test:e2e:debug   # Debug mode
 ```
 
 **What to test:**
+
 - Complete user workflows
 - Multi-page interactions
 - Real API calls
 - Cross-browser compatibility
 
 **Example:**
+
 ```typescript
 // tests/e2e/auth.spec.ts
 import { test, expect } from '@playwright/test';
@@ -320,41 +338,42 @@ test('user can register, login, and logout', async ({ page }) => {
 ### Playwright MCP Workflow
 
 **Example: Verify Login Feature**
+
 ```typescript
 // 1. Navigate to login page
 await mcp__playwright__playwright_navigate({
   url: 'http://localhost:3000/login',
   browserType: 'chromium',
-  headless: false // See browser window
+  headless: false, // See browser window
 });
 
 // 2. Take screenshot before interaction
 await mcp__playwright__playwright_screenshot({
   name: 'login-page-initial',
-  savePng: true
+  savePng: true,
 });
 
 // 3. Fill form
 await mcp__playwright__playwright_fill({
   selector: 'input[name="email"]',
-  value: 'test@example.com'
+  value: 'test@example.com',
 });
 
 await mcp__playwright__playwright_fill({
   selector: 'input[name="password"]',
-  value: 'SecurePass123!'
+  value: 'SecurePass123!',
 });
 
 // 4. Click login button
 await mcp__playwright__playwright_click({
-  selector: 'button[type="submit"]'
+  selector: 'button[type="submit"]',
 });
 
 // 5. Wait for redirect and verify
-await new Promise(resolve => setTimeout(resolve, 1000));
+await new Promise((resolve) => setTimeout(resolve, 1000));
 await mcp__playwright__playwright_screenshot({
   name: 'dashboard-after-login',
-  savePng: true
+  savePng: true,
 });
 
 // 6. Get page content to verify
@@ -366,6 +385,7 @@ await mcp__playwright__playwright_close({});
 ```
 
 **Debugging Checklist:**
+
 - [ ] Navigate to page successfully
 - [ ] Take "before" screenshot
 - [ ] Interact with UI elements
@@ -386,14 +406,8 @@ Every commit triggers these checks automatically:
 // package.json
 {
   "lint-staged": {
-    "*.{ts,tsx}": [
-      "prettier --write",
-      "eslint --fix",
-      "vitest related --run"
-    ],
-    "*.{json,md}": [
-      "prettier --write"
-    ]
+    "*.{ts,tsx}": ["prettier --write", "eslint --fix", "vitest related --run"],
+    "*.{json,md}": ["prettier --write"]
   }
 }
 ```
@@ -403,17 +417,20 @@ Every commit triggers these checks automatically:
 Before committing, ensure:
 
 1. **Format Code**
+
    ```bash
    npm run format
    ```
 
 2. **Lint Code**
+
    ```bash
    npm run lint
    npm run lint:fix  # Auto-fix issues
    ```
 
 3. **Run Tests**
+
    ```bash
    npm run test              # All tests
    npm run test:unit         # Unit tests only
@@ -422,6 +439,7 @@ Before committing, ensure:
    ```
 
 4. **Build Successfully**
+
    ```bash
    npm run build  # Backend and frontend must build
    ```
@@ -437,6 +455,7 @@ Before committing, ensure:
    - Use Playwright MCP if needed
 
 7. **Commit with Descriptive Message**
+
    ```bash
    git add .
    git commit -m "feat: add user registration with email validation
@@ -461,6 +480,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/):
 ```
 
 **Types:**
+
 - `feat`: New feature
 - `fix`: Bug fix
 - `docs`: Documentation changes
@@ -470,6 +490,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/):
 - `chore`: Build process, dependencies
 
 **Examples:**
+
 ```
 feat(auth): add password reset functionality
 
@@ -535,6 +556,7 @@ Fixes #38
 - **Interfaces over types** for object shapes
 
 **Example:**
+
 ```typescript
 // ✅ Good
 interface User {
@@ -588,6 +610,7 @@ export default defineConfig({
 - **TODOs**: Use `// TODO: description` for future work
 
 **Example:**
+
 ```typescript
 /**
  * Registers a new user with email and password.
@@ -627,20 +650,23 @@ export async function register(
 
 Update `docs/api.md` when adding/changing endpoints:
 
-```markdown
+````markdown
 ### POST /api/auth/register
 
 Register a new user account.
 
 **Request:**
+
 ```json
 {
   "email": "user@example.com",
   "password": "SecurePass123!"
 }
 ```
+````
 
 **Response (201):**
+
 ```json
 {
   "user": {
@@ -653,8 +679,10 @@ Register a new user account.
 ```
 
 **Errors:**
+
 - `400` - Validation error (invalid email, weak password)
 - `409` - Email already exists
+
 ```
 
 ### README Updates
@@ -672,6 +700,20 @@ Update README.md when:
 ### Daily Development Cycle
 
 ```
+
+0. ⚠️ FIRST: Verify Node.js version (CRITICAL)
+   node -v # Must show v22.x.x
+   nvm use 22 # If wrong version
+   npm run check-node-version # Verify it worked
+
+   ⚠️ DO THIS EVERY TIME YOU:
+   - Open a new terminal
+   - Resume development after a break
+   - Switch from another project
+   - Notice any "module version mismatch" errors
+
+   Why? better-sqlite3 requires exact Node 22. Wrong version = broken tests/builds.
+
 1. Pull latest changes
    git pull origin main
 
@@ -679,15 +721,21 @@ Update README.md when:
    git checkout -b feat/user-registration
 
 3. Write failing test (RED)
+
    # Edit: src/services/AuthService.test.ts
+
    npm run test:watch
 
 4. Implement feature (GREEN)
+
    # Edit: src/services/AuthService.ts
+
    # Test passes!
 
 5. Refactor code (REFACTOR)
+
    # Clean up, optimize
+
    # Tests still pass
 
 6. Run all checks
@@ -698,9 +746,11 @@ Update README.md when:
 
 7. Verify in browser
    npm run dev
+
    # Manual testing or Playwright MCP
 
 8. Update documentation
+
    # Update README, API docs
 
 9. Commit changes
@@ -712,9 +762,15 @@ Update README.md when:
 
 11. Create pull request (if collaborative)
     # Review and merge
-```
+
+````
 
 ### Sprint Workflow
+
+**Every Development Session Start:**
+- ⚠️ **FIRST**: Check Node version (`node -v` → v22.x.x, if not: `nvm use 22`)
+- Pull latest changes (`git pull`)
+- Review sprint goals (`docs/status.md`)
 
 **Week 1 (Planning):**
 - Review sprint goals
@@ -723,6 +779,7 @@ Update README.md when:
 - Assign tasks
 
 **Week 2-3 (Development):**
+- Daily: **Verify Node version before starting**
 - Daily: TDD cycle
 - Daily: Commit working code
 - Daily: Update task board
@@ -759,7 +816,7 @@ jobs:
       - run: npm run test
       - run: npm run build
       - run: npm run test:e2e
-```
+````
 
 ---
 
@@ -767,25 +824,53 @@ jobs:
 
 ### Common Issues
 
+**⚠️ BEFORE TROUBLESHOOTING ANYTHING: Check Node Version**
+
+```bash
+node -v  # Must be v22.x.x
+nvm use 22  # If wrong
+npm run check-node-version
+```
+
+**90% of mysterious errors** are caused by wrong Node version. Check this first!
+
 **Tests failing locally but pass in CI:**
-- Check Node.js version (use `.nvmrc`)
+
+- **FIRST**: Check Node.js version (`node -v` → should be v22.x.x)
+- Use nvm: `nvm use 22` (reads from `.nvmrc`)
 - Clear `node_modules` and reinstall
 - Check environment variables
 
+**"NODE_MODULE_VERSION mismatch" or "better-sqlite3" errors:**
+
+- **ROOT CAUSE**: Wrong Node version
+- **FIX**: `nvm use 22 && npm rebuild better-sqlite3 --workspace=src/backend`
+- See `docs/node-version-management.md` for details
+
 **Playwright tests flaky:**
+
 - Add explicit waits (`waitFor`)
 - Increase timeout for slow operations
 - Use Playwright MCP to debug
 
 **Build fails:**
+
+- **FIRST**: Check Node version
 - Check TypeScript errors (`npm run type-check`)
 - Check for missing dependencies
 - Clear build cache (`rm -rf dist`)
 
 **Pre-commit hook fails:**
+
 - Run checks manually to see specific error
 - Fix issues, stage changes, commit again
 - Bypass hook only if absolutely necessary: `git commit --no-verify`
+
+**Database errors (locked, corrupted, etc.):**
+
+- Ensure only one dev server running
+- Kill zombie processes: `pkill -f "npm run dev"`
+- Delete and recreate DB: `rm src/backend/data/crudibase.db && npm run dev:backend`
 
 ---
 

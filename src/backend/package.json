@@ -5,9 +5,12 @@
   "main": "dist/index.js",
   "type": "module",
   "scripts": {
+    "check-node-version": "node ../../scripts/check-node-version.js",
     "dev": "tsx watch src/index.ts",
+    "prebuild": "npm run check-node-version",
     "build": "tsc",
     "start": "node dist/index.js",
+    "pretest": "npm run check-node-version",
     "test": "vitest run",
     "test:watch": "vitest watch",
     "test:coverage": "vitest run --coverage",

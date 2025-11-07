@@ -57,8 +57,24 @@ export default function Dashboard() {
       <nav className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              <h1 className="text-xl font-bold text-primary">Crudibase</h1>
+            <div className="flex items-center gap-8">
+              <Link to="/dashboard" className="text-xl font-bold text-primary">
+                Crudibase
+              </Link>
+              <div className="flex gap-6">
+                <Link
+                  to="/search"
+                  className="text-sm text-gray-700 hover:text-gray-900 font-medium"
+                >
+                  Search
+                </Link>
+                <Link
+                  to="/collections"
+                  className="text-sm text-gray-700 hover:text-gray-900 font-medium"
+                >
+                  Collections
+                </Link>
+              </div>
             </div>
             <div className="flex items-center">
               <button

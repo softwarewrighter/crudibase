@@ -2,6 +2,8 @@ import express, { type Request, type Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { authRouter } from './routes/auth';
+import { wikibaseRouter } from './routes/wikibase';
+import { collectionsRouter } from './routes/collections';
 
 // Load environment variables
 dotenv.config();
@@ -26,6 +28,8 @@ app.get('/health', (_req: Request, res: Response) => {
 
 // API routes
 app.use('/api/auth', authRouter);
+app.use('/api/wikibase', wikibaseRouter);
+app.use('/api/collections', collectionsRouter);
 
 // API info endpoint
 app.get('/api', (_req: Request, res: Response) => {
