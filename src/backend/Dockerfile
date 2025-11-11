@@ -64,4 +64,4 @@ EXPOSE 3001
 ENTRYPOINT ["dumb-init", "--"]
 
 # Start the backend server
-CMD ["node", "src/backend/dist/index.js"]
+CMD ["node", "src/backend/dist/src/index.js"]
