@@ -1,4 +1,7 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
+# Check markdown files for encoding issues (CRLF, binary characters)
+./scripts/check-markdown-encoding.sh || exit 1
+
 npx lint-staged
