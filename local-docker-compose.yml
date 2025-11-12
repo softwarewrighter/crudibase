@@ -4,7 +4,6 @@ services:
     build:
       context: .
       dockerfile: src/backend/Dockerfile
-    image: registry.digitalocean.com/crudibase-registry/crudibase-backend:latest
     container_name: crudibase-backend
     restart: unless-stopped
     ports:
@@ -32,7 +31,6 @@ services:
     build:
       context: .
       dockerfile: src/frontend/Dockerfile
-    image: registry.digitalocean.com/crudibase-registry/crudibase-frontend:latest
     container_name: crudibase-frontend
     restart: unless-stopped
     ports:
