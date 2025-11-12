@@ -29,28 +29,35 @@ fi
 echo "✅ Authentication successful"
 echo ""
 
-# Build images
-echo "🔨 Building Docker images..."
-echo "Building backend..."
-docker build -f src/backend/Dockerfile -t "${BACKEND_IMAGE}" .
-echo "✅ Backend image built"
+# Build multi-architecture images using buildx
+echo "🔨 Building multi-architecture Docker images (linux/amd64, linux/arm64)..."
 echo ""
 
-echo "Building frontend..."
-docker build -f src/frontend/Dockerfile -t "${FRONTEND_IMAGE}" .
-echo "✅ Frontend image built"
+# Create buildx builder if it doesn't exist
+if ! docker buildx inspect crudibase-builder &> /dev/null; then
+    echo "Creating buildx builder..."
+    docker buildx create --name crudibase-builder --use
+    docker buildx inspect --bootstrap
+fi
+
+echo "Building and pushing backend..."
+docker buildx build \
+    --platform linux/amd64,linux/arm64 \
+    --file src/backend/Dockerfile \
+    --tag "${BACKEND_IMAGE}" \
+    --push \
+    .
+echo "✅ Backend image built and pushed"
 echo ""
 
-# Push images
-echo "📤 Pushing images to registry..."
-echo "Pushing backend..."
-docker push "${BACKEND_IMAGE}"
-echo "✅ Backend image pushed"
-echo ""
-
-echo "Pushing frontend..."
-docker push "${FRONTEND_IMAGE}"
-echo "✅ Frontend image pushed"
+echo "Building and pushing frontend..."
+docker buildx build \
+    --platform linux/amd64,linux/arm64 \
+    --file src/frontend/Dockerfile \
+    --tag "${FRONTEND_IMAGE}" \
+    --push \
+    .
+echo "✅ Frontend image built and pushed"
 echo ""
 
 # Verify
