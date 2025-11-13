@@ -92,6 +92,9 @@ test-results/
 docs/chat-history.txt
 docs/*.draft.md
 
+# Traefik SSL certificates
+traefik/letsencrypt/acme.json
+
 # Misc
 .turbo/
 .vercel/

@@ -1,0 +1,46 @@
+# Traefik Dynamic Configuration
+# This file is watched by Traefik and reloaded on changes
+
+http:
+  routers:
+    # Traefik Dashboard
+    dashboard:
+      rule: "Host(`traefik.codingtech.info`)"
+      service: api@internal
+      entryPoints:
+        - websecure
+      middlewares:
+        - dashboard-auth
+      tls:
+        certResolver: letsencrypt
+
+  middlewares:
+    # Basic authentication for dashboard
+    dashboard-auth:
+      basicAuth:
+        users:
+          # Generate with: echo $(htpasswd -nb admin yourpassword) | sed -e s/\\$/\\$\\$/g
+          # Default: admin / changeme123 (CHANGE THIS IN PRODUCTION!)
+          - "admin:$$apr1$$6oT1MbLY$$8jvYqXbz3FlVQP9F7z5Iv/"
+
+    # Rate limiting middleware (can be applied to any service)
+    rate-limit:
+      rateLimit:
+        average: 100
+        burst: 50
+        period: 1s
+
+    # Compression middleware
+    compress:
+      compress: true
+
+# TLS options
+tls:
+  options:
+    default:
+      minVersion: VersionTLS12
+      sniStrict: true
+      cipherSuites:
+        - TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        - TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        - TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305

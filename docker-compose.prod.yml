@@ -1,0 +1,119 @@
+# Production Docker Compose with Traefik Reverse Proxy
+# Domain: codingtech.info
+# Crudibase: crudibase.codingtech.info
+# Future: cruditrack.codingtech.info
+
+version: '3.8'
+
+services:
+  # Traefik reverse proxy with automatic SSL
+  traefik:
+    image: traefik:v3.0
+    container_name: traefik
+    restart: unless-stopped
+    ports:
+      - "80:80"     # HTTP (redirects to HTTPS)
+      - "443:443"   # HTTPS
+    volumes:
+      # Docker API access for service discovery
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      # Configuration files
+      - ./traefik/traefik.yml:/traefik.yml:ro
+      - ./traefik/dynamic.yml:/dynamic.yml:ro
+      # SSL certificates storage
+      - ./traefik/letsencrypt:/letsencrypt
+    networks:
+      - crudibase-network
+    labels:
+      - "traefik.enable=true"
+      # Dashboard
+      - "traefik.http.routers.dashboard.rule=Host(`traefik.codingtech.info`)"
+      - "traefik.http.routers.dashboard.service=api@internal"
+      - "traefik.http.routers.dashboard.entrypoints=websecure"
+      - "traefik.http.routers.dashboard.tls.certresolver=letsencrypt"
+
+  # Backend API service
+  backend:
+    image: registry.digitalocean.com/crudibase-registry/crudibase-backend:latest
+    container_name: crudibase-backend
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRES_IN=${JWT_EXPIRES_IN:-1h}
+      - DATABASE_PATH=/app/src/backend/data/crudibase.db
+    volumes:
+      - backend-data:/app/src/backend/data
+    networks:
+      - crudibase-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    labels:
+      - "traefik.enable=true"
+      # Main API endpoint
+      - "traefik.http.routers.backend.rule=Host(`crudibase.codingtech.info`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.backend.entrypoints=websecure"
+      - "traefik.http.routers.backend.tls.certresolver=letsencrypt"
+      - "traefik.http.services.backend.loadbalancer.server.port=3001"
+      # Alternative: dedicated API subdomain
+      - "traefik.http.routers.backend-api.rule=Host(`api.crudibase.codingtech.info`)"
+      - "traefik.http.routers.backend-api.entrypoints=websecure"
+      - "traefik.http.routers.backend-api.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.backend-api.service=backend"
+      # CORS middleware
+      - "traefik.http.middlewares.backend-cors.headers.accesscontrolallowmethods=GET,POST,PUT,DELETE,OPTIONS"
+      - "traefik.http.middlewares.backend-cors.headers.accesscontrolalloworiginlist=https://crudibase.codingtech.info"
+      - "traefik.http.middlewares.backend-cors.headers.accesscontrolallowheaders=Authorization,Content-Type"
+      - "traefik.http.middlewares.backend-cors.headers.accesscontrolmaxage=100"
+      - "traefik.http.middlewares.backend-cors.headers.addvaryheader=true"
+      - "traefik.http.routers.backend.middlewares=backend-cors"
+      - "traefik.http.routers.backend-api.middlewares=backend-cors"
+
+  # Frontend React app
+  frontend:
+    image: registry.digitalocean.com/crudibase-registry/crudibase-frontend:latest
+    container_name: crudibase-frontend
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - backend
+    networks:
+      - crudibase-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://127.0.0.1:3000/"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    labels:
+      - "traefik.enable=true"
+      # Main application
+      - "traefik.http.routers.frontend.rule=Host(`crudibase.codingtech.info`)"
+      - "traefik.http.routers.frontend.entrypoints=websecure"
+      - "traefik.http.routers.frontend.tls.certresolver=letsencrypt"
+      - "traefik.http.services.frontend.loadbalancer.server.port=3000"
+      # Security headers
+      - "traefik.http.middlewares.frontend-security.headers.frameDeny=true"
+      - "traefik.http.middlewares.frontend-security.headers.contentTypeNosniff=true"
+      - "traefik.http.middlewares.frontend-security.headers.browserXssFilter=true"
+      - "traefik.http.middlewares.frontend-security.headers.stsSeconds=31536000"
+      - "traefik.http.middlewares.frontend-security.headers.stsIncludeSubdomains=true"
+      - "traefik.http.middlewares.frontend-security.headers.stsPreload=true"
+      # Compression
+      - "traefik.http.middlewares.frontend-compress.compress=true"
+      # Apply middlewares
+      - "traefik.http.routers.frontend.middlewares=frontend-security,frontend-compress"
+
+volumes:
+  backend-data:
+    driver: local
+
+networks:
+  crudibase-network:
+    driver: bridge
